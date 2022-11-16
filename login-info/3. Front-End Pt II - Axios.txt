@@ -1,0 +1,57 @@
+Doc: https://github.com/r4mpo/crud-router-laravue/blob/master/2.%20crud%20(axios).pdf
+
+1. Comando via CMD (apontando para o projeto)
+> npm install axios --save
+
+- - - - - - - - - - - - - - - - - - 
+
+2. Services
+* Criamos a pasta 'services' em resources > js;
+* Dentro de services (pasta recém-criada), iniciamos outros 2 arquivos -> config.js e {arquivo-relacionado-a-api}.js;
+* O conteúdo de resources > js > services > config.js deve ser:
+ import axios from 'axios'
+ export const http = axios.create({
+ baseURL: 'http://127.0.0.1:8000' /* AQUI É COLOCADA A BASE DA ROTA DA API */
+ })
+
+- - - - - - - - - - - - - - - - - - 
+
+3. resources > js > services > auth.js
+O arquivo de auth.js deve conter o código de consumo à API, algo como:
+
+import { http } from './config.js';
+
+export default {
+    auth: (data) => {
+        return http.post('/login', data);
+    },
+}
+
+- - - - - - - - - - - - - - - - - - 
+
+4. resources > js > views > Login.vue
+> Observe o método de login:
+        
+        login() {
+            Login.auth(this.data).then(resposta => {
+                Cookie.set('_authToken', resposta.data.access_token)
+            })
+        }
+
+> Note que a função armazenou o Token em um Cookie - usaremos o pacote js-cookie
+
+> Os outros padrões do Vue devem ser seguidos, como o v-model dos inputs,
+importação do data(){} e etc. Em caso de dúvida, conferir resources > js > views > Login.vue
+
+- - - - - - - - - - - - - - - - - - 
+
+5. Comando via CMD (apontando para o projeto)
+> npm i js-cookie
+
+- - - - - - - - - - - - - - - - - - 
+
+6. resources > js > views > Login.vue
+
+> Importamos o pacote de cookies:
+import Cookie from 'js-cookie';
+

@@ -1,0 +1,85 @@
+1. app > Http > Controllers > auth > AuthController.php
+
+> Inserimos a função para cadastrar novos usuários:
+
+     public function register(Request $request)
+    {
+        // dd($request->all());
+        $this->validate(request(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+        
+        $user = User::create([
+            'name' => $request->name, 
+            'email' => $request->email, 
+            'password' => bcrypt($request->password)
+        ]);        
+        return response()->json(['resposta' => "$user->name cadastrado com sucesso."]);
+    }
+
+- - - - - - -
+
+2. resources > js > App.vue
+
+> Inserimos isso dentro da tag script:
+
+    import Cookie from 'js-cookie';
+
+> Colocamos a tag data:
+
+	data()
+        { 
+            return {
+                token: Cookie.get('_authToken')
+            }
+        },
+
+> Podemos colocar v-if="token != undefined" nos elementos, para impedirmos usuários não logados de vê-los
+
+> Podemos criar um método de logout:
+            
+	logout()
+            {
+                Cookie.remove('_authToken');
+                this.$router.go();
+            }
+
+- - - - - - 
+
+3. Criar resources > js > views > Register.vue
+
+    data() {
+        return {
+            usuario: {
+                name: '',
+                email: '',
+                password: '',
+            }
+        }
+    },
+
+    methods: {
+        register() 
+        {
+            Register.register(this.usuario).then(resposta => {
+                alert(resposta.data.access_token)
+                this.$router.go();
+            })
+        }
+    }
+
+- - - - - - 
+
+4. routes > api.php
+Acrescentar a rota de registro:
+    Route::post('/register', 'register');
+
+- - - - - - - 
+
+5. resources > js > routers > router.js
+
+incluir a rota de registro
+
+- - - - - - - 

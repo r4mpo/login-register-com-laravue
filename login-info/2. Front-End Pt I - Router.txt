@@ -1,0 +1,102 @@
+1. Instalação do Vue-Router (cmd / apontando para o projeto):
+
+> composer require laravel/ui "^3.0" --ignore-platform-reqs
+> php artisan ui vue
+> npm install --save vue@next
+> npm install --save-dev vue-loader@next
+
+---------------
+
+2. Substituir conteúdo de /webpack.mix.js para:
+const mix = require('laravel-mix');
+mix.js('resources/js/app.js', 'public/js')
+ .vue() //..verify this!
+ .postCss('resources/css/app.css', 'public/css', [
+ //
+ ]);
+
+-------------
+
+3. Incluindo componentes em resources > js > app.js. O código deste arquivo,
+considerando que seu componente .vue se chame App, será:
+
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from "./routers/router.js";
+const app =
+ createApp(App);
+ app.use(router);
+ app.mount("#app");
+
+- - - [ I N F O ] - - -
+
+Os componentes .vue que, basicamente, servirão como nossas views, devem ser armazenados
+em uma pasta gerada, sendo esta “resources > js > views > {componentes.vue}”. Observe a
+estrutura completa do projeto em sua atual versão (lembrando que, a esta altura, temos os
+routers, mas não o crud):
+
+Esses componentes VueJs possuem uma estrutura bem simples, composta por 3 blocos:
+template, script e style. O template é onde inserimos o nosso HTML, Style é onde inserimos
+nosso CSS e Script é onde inserimos o nosso js. Podemos exportar esses arquivos através do
+JavaScript. Ele tem algumas peculiaridades, como a forma de criar href e a tag <routeview></route-view> (esta última, no caso, serve para exibir os componentes vue).
+
+- - - - - - - - - - - - -
+
+4. Criar resource > js > views > Login.vue
+> Neste arquivo, deve ser desenvolvido o layout e style da interface de login
+
+- - - - - - - - - - - - -
+
+5. Criar resources > js > App.vue
+> Padrão app.vue, configurações gerais para todas páginas
+
+- - - - - - - - - - - - -
+
+6. Incluir o app.vue na resources > views > welcome.blade.php
+
+
+    {{-- Trazendo o vue.js para a view --}}
+    <div id="app">
+        <app></app>
+    </div>
+    {{-- Importando arquivo JS --}}
+    <script src="{{ mix('js/app.js') }}"></script>
+
+- - - - - - - - - - - - -
+
+7. Instalação do Vue-Router (cmd / apontando para o projeto):
+> npm install vue-router
+
+- - - - - - - - - - - - -
+
+8. routes > web.php
+Este arquivo de rotas do Laravel deve possuir algo como:
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () { return view('welcome'); });
+Route::get('/spa/{any}', function () { return view('welcome'); })->where('any', '.*');
+
+- - - - - - - - - - - - -
+
+9. resources > js > routers > router.js
+
+import Login from '../views/Login.vue';
+import {createRouter, createWebHistory} from "vue-router";
+
+const routes = [
+    {
+        path: '/spa/login',
+        name: 'login',
+        component: Login
+    },
+];
+
+const router = new createRouter({
+    history: createWebHistory(),
+    routes
+});
+
+export default router;

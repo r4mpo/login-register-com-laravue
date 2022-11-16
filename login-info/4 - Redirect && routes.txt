@@ -1,0 +1,33 @@
+1. Criar resources > js > services > middleware.js
+2. Em resources > js > routers > router.js importamos import Auth from "'../services/middleware.js';"
+3. Nas rotas que quisermos proteger pelo JavaScript, usamos a propriedade "beforeEnter: Auth.auth"
+
+----
+
+4. resources > js > services > middleware.js
+
+import Cookie from 'js-cookie';
+
+export default {
+    auth(to, from, next) {
+        const token = Cookie.get('_authToken');
+
+        if(!token){
+            next('/spa/login');
+        } else {
+            next();
+        }
+    }
+}
+
+- - - [  C O N S I D E R A Ç Õ E S   F I N A I S  ] - - -
+
+Neste projeto, a remoção do Cookie está sendo feita ao recarregar a página de login. Em um projeto real, haveríamos de criar um botão de logout responsável por excluir o token e, além disso, redirecionar o usuário para a página de login novamente.
+
+**** - Documentações utilizadas - ****
+
+Laravel JWT: https://jwt-auth.readthedocs.io/en/develop/quick-start/#create-the-authcontroller
+Tutorial: https://www.youtube.com/watch?v=Os50jTXCR2E&t=244s
+JS-Cookie: https://www.npmjs.com/package/js-cookie
+
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - -
